@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ticketsmoreweb/src/bloc/provider.dart';
 
 GlobalKey<FormState> keyForm = new GlobalKey();
@@ -19,15 +19,15 @@ class _HomePageState extends State<HomePage> {
   TextEditingController passwordCtrl = new TextEditingController();
   TextEditingController repeatPassCtrl = new TextEditingController();
 
-  Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
-  Map<PolylineId, Polyline> _polylines = {};
-  CameraPosition _kGooglePlex = CameraPosition(
-      target: LatLng(19.7025, -101.19250000000001),
-      zoom: 15.2569); //Variable para establecer la ubicacion inicial del mapa
-  Completer<GoogleMapController> _controller =
-      Completer(); //Controlador para poder indicar que se ha cargado el mapa
-  GoogleMapController
-      _mapController; //Controlador para acceder a la informacion del mapa
+  // Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
+  // Map<PolylineId, Polyline> _polylines = {};
+  // CameraPosition _kGooglePlex = CameraPosition(
+  //     target: LatLng(19.7025, -101.19250000000001),
+  //     zoom: 15.2569); //Variable para establecer la ubicacion inicial del mapa
+  // Completer<GoogleMapController> _controller =
+  //     Completer(); //Controlador para poder indicar que se ha cargado el mapa
+  // GoogleMapController
+  //     _mapController; //Controlador para acceder a la informacion del mapa
 
   @override
   void initState() {

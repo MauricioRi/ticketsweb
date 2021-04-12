@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ticketsmoreweb/src/pages/geofence.dart';
 // import 'package:tickets_geofence/src/pages/account_configuration_page.dart';
 // import 'package:tickets_geofence/src/pages/initial_page/prueba_geocoder.dart';
 
@@ -42,5 +43,6 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
 
     'login': (BuildContext context) => LoginPage(),
     'home': (BuildContext context) => HomePage(),
+    'Mapa': (BuildContext context) => GeofenceMap(),
   };
 }
