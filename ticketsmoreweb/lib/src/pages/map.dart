@@ -166,17 +166,13 @@ class _GeofenceMapState extends State<GeofenceMap> {
       map.onClick.listen((event) async {
         if (_isSearchInMap == 2) {
           _ubicacion = event.latLng;
-          print(event.latLng.lat);
-          print(event.latLng.lng);
-          try {
-            Address direccion = await geoCode.reverseGeocoding(
-                latitude: event.latLng.lat, longitude: event.latLng.lng);
-            print(direccion);
-            _direccion.text = direccion?.city;
-          } catch (e) {
-            print(e.toString());
-            return;
-          }
+          print(event.latLng);
+
+          Address direccion = await geoCode.reverseGeocoding(
+              latitude: event.latLng.lat, longitude: event.latLng.lng);
+          print(direccion);
+          _direccion.text = direccion?.city;
+
           marcadores.length > 0 ? marcadores[0].visible = false : null;
 
           circles.length > 0 ? circles[0].visible = false : null;
