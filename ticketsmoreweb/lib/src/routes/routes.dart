@@ -12,6 +12,7 @@ import 'package:ticketsmoreweb/src/pages/geofence.dart';
 
 import 'package:ticketsmoreweb/src/pages/home_page.dart';
 import 'package:ticketsmoreweb/src/pages/login_page.dart';
+import 'package:ticketsmoreweb/src/pages/rutas.dart';
 
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
@@ -44,5 +45,6 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
     'login': (BuildContext context) => LoginPage(),
     'home': (BuildContext context) => HomePage(),
     'Mapa': (BuildContext context) => GeofenceMap(),
+    'Rutas': (BuildContext context) => Rutas(),
   };
 }

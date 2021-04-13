@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ticketsmoreweb/src/bloc/provider.dart';
-
-GlobalKey<FormState> keyForm = new GlobalKey();
+// import 'package:ticketsmoreweb/src/routes/routes.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GlobalKey<FormState> keyForm = new GlobalKey();
+  BuildContext scafoldcontext;
   TextEditingController nameCtrl = new TextEditingController();
   TextEditingController emailCtrl = new TextEditingController();
   TextEditingController mobileCtrl = new TextEditingController();
@@ -38,61 +38,76 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of(context);
+    // final bloc = Provider.of(context);
     final Map<String, dynamic> arguments =
         ModalRoute.of(context).settings.arguments;
     //'Email: ${bloc.email}'),
     // Text('Password: ${bloc.password}'),
-    return MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text("rutas de " + arguments["Name_user"] ?? ""),
-        ),
-        body: new SingleChildScrollView(
-          child: new Container(
-            margin: new EdgeInsets.all(60.0),
-            child: new Form(
+    setState(() {});
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("rutas de " + arguments["Name_user"] ?? ""),
+      ),
+      body: Builder(builder: (context) {
+        scafoldcontext = context;
+        // setState(() {});
+        return SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            //height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.all(60.0),
+            child: Form(
               key: keyForm,
               child: formUI(),
             ),
           ),
-        ),
-        drawer: Drawer(
+        );
+      }),
+      drawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
           child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              // DrawerHeader(
-              //   child: Text('Drawer Header'),
-              //   decoration: BoxDecoration(
-              //     color: Colors.blue,
-              //   ),
-              // ),
-              ListTile(
-                title: Text('rutas'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Subrutas'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+        // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          // DrawerHeader(
+          //   child: Text('Drawer Header'),
+          //   decoration: BoxDecoration(
+          //     color: Colors.blue,
+          //   ),
+          // ),
+          ListTile(
+            title: Text('rutas'),
+            onTap: () {
+              // Update the state of the app
+              // ...
+              // Then close the drawer
+              // Navigator.pop(context);
+              Navigator.pushNamed(
+                context,
+                'Rutas',
+                arguments: ScreenArguments(
+                  arguments["Name_user"],
+                  arguments["idusersystem"],
+                  arguments["idroute"],
+                ),
+              );
+              //  Scaffold.of(scafoldcontext).openEndDrawer();
+            },
           ),
-        ),
-      ),
+          ListTile(
+            title: Text('Subrutas'),
+            onTap: () {
+              // Update the state of the app
+              // ...
+              // Then close the drawer
+              //Navigator.pop(context);
+              // Scaffold.of(scafoldcontext).openEndDrawer();
+            },
+          ),
+        ],
+      )),
     );
   }
 
@@ -103,26 +118,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String gender = 'hombre';
-
+  //List<String> ruta = List.of({"ruta1", "ruta2"});
+  String rutass = "rutas ";
   Widget formUI() {
     return Column(
       children: <Widget>[
         formItemsDesign(
-            Icons.person,
+            Icons.car_rental,
             TextFormField(
               controller: nameCtrl,
               decoration: new InputDecoration(
-                labelText: 'Nombre',
+                labelText: 'nombre de la ruta',
               ),
               validator: validateName,
             )),
         formItemsDesign(
-            Icons.phone,
+            Icons.timelapse_sharp,
             TextFormField(
               controller: mobileCtrl,
               decoration: new InputDecoration(
-                labelText: 'Numero de telefono',
+                labelText: 'numero de minutos de ruta',
               ),
               keyboardType: TextInputType.phone,
               maxLength: 10,
@@ -131,58 +146,59 @@ class _HomePageState extends State<HomePage> {
         formItemsDesign(
             null,
             Column(children: <Widget>[
-              Text("Genero"),
+              Text("subrruta"),
               RadioListTile<String>(
-                title: const Text('Hombre'),
-                value: 'hombre',
-                groupValue: gender,
+                title: const Text('charo'),
+                value: 'charo',
+                groupValue: rutass,
                 onChanged: (value) {
                   setState(() {
-                    gender = value;
+                    rutass = value;
                   });
                 },
               ),
               RadioListTile<String>(
-                title: const Text('Mujer'),
-                value: 'mujer',
-                groupValue: gender,
+                title: const Text('morelia'),
+                value: 'morelia',
+                groupValue: rutass,
                 onChanged: (value) {
                   setState(() {
-                    gender = value;
+                    rutass = value;
                   });
                 },
               )
             ])),
-        formItemsDesign(
-            Icons.email,
-            TextFormField(
-              controller: emailCtrl,
-              decoration: new InputDecoration(
-                labelText: 'Email',
-              ),
-              keyboardType: TextInputType.emailAddress,
-              maxLength: 32,
-              validator: validateEmail,
-            )),
-        formItemsDesign(
-            Icons.remove_red_eye,
-            TextFormField(
-              controller: passwordCtrl,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Contraseña',
-              ),
-            )),
-        formItemsDesign(
-            Icons.remove_red_eye,
-            TextFormField(
-              controller: repeatPassCtrl,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Repetir la Contraseña',
-              ),
-              validator: validatePassword,
-            )),
+        // formItemsDesign(
+        //     Icons.email,
+        //     TextFormField(
+        //       controller: emailCtrl,
+        //       decoration: new InputDecoration(
+        //         labelText: 'Email',
+        //       ),
+        //       keyboardType: TextInputType.emailAddress,
+        //       maxLength: 32,
+        //       validator: validateEmail,
+        //     )),
+        // formItemsDesign(
+        //     Icons.remove_red_eye,
+        //     TextFormField(
+        //       controller: passwordCtrl,
+        //       obscureText: true,
+        //       decoration: InputDecoration(
+        //         labelText: 'Contraseña',
+        //       ),
+        //     )
+        //     ),
+        // formItemsDesign(
+        //     Icons.remove_red_eye,
+        //     TextFormField(
+        //       controller: repeatPassCtrl,
+        //       obscureText: true,
+        //       decoration: InputDecoration(
+        //         labelText: 'Repetir la Contraseña',
+        //       ),
+        //       validator: validatePassword,
+        //     )),
         GestureDetector(
             onTap: () {
               save();
@@ -232,9 +248,9 @@ class _HomePageState extends State<HomePage> {
     String patttern = r'(^[0-9]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "El telefono es necesariod";
-    } else if (value.length != 10) {
-      return "El numero debe tener 10 digitos";
+      return "los minutos son necesarios";
+    } else if (value.length > 0) {
+      return "El numero debe ser mayo a 0";
     }
     return null;
   }
@@ -260,4 +276,11 @@ class _HomePageState extends State<HomePage> {
       keyForm.currentState.reset();
     }
   }
+}
+
+class ScreenArguments {
+  final String nameuser;
+  final String iduser;
+  final String idroute;
+  ScreenArguments(this.nameuser, this.iduser, this.idroute);
 }
