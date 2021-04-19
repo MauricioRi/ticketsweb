@@ -46,15 +46,15 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
     return Scaffold(
       appBar: AppBar(
-        title: Text("rutas de " + arguments["Name_user"] ?? ""),
+        title: Text("rutas de "),
       ),
       body: Builder(builder: (context) {
-        scafoldcontext = context;
+        //scafoldcontext = contexts;
         // setState(() {});
         return SingleChildScrollView(
           child: Container(
             width: MediaQuery.of(context).size.width,
-            //height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height,
             padding: EdgeInsets.all(60.0),
             child: Form(
               key: keyForm,
@@ -87,11 +87,6 @@ class _HomePageState extends State<HomePage> {
               Navigator.pushNamed(
                 context,
                 'Rutas',
-                arguments: ScreenArguments(
-                  arguments["Name_user"],
-                  arguments["idusersystem"],
-                  arguments["idroute"],
-                ),
               );
               //  Scaffold.of(scafoldcontext).openEndDrawer();
             },
@@ -99,6 +94,24 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             title: Text('Subrutas'),
             onTap: () {
+              Navigator.pushNamed(
+                context,
+                'subrutas',
+              );
+              // Update the state of the app
+              // ...
+              // Then close the drawer
+              //Navigator.pop(context);
+              // Scaffold.of(scafoldcontext).openEndDrawer();
+            },
+          ),
+          ListTile(
+            title: Text('Geocercas'),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                'Mapa',
+              );
               // Update the state of the app
               // ...
               // Then close the drawer

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Subrutas extends StatefulWidget {
-  Rutas({Key key}) : super(key: key);
+  Subrutas({Key key}) : super(key: key);
 
   @override
   _SubrutasState createState() => _SubrutasState();
@@ -11,6 +11,10 @@ class _SubrutasState extends State<Subrutas> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: Text("Subrrutas"),
+      ),
       body: SingleChildScrollView(
           child: Container(
         //  DataTable(
@@ -47,18 +51,18 @@ class _SubrutasState extends State<Subrutas> {
         //             )
         child: DataTable(
           columns: <DataColumn>[
-             DataColumn(
+            DataColumn(
               label: Text(
                 'Numero de subrruta ',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            DataColumn(
-              label: Text(
-                'Nombre de subrruta ',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
+            // DataColumn(
+            //   label: Text(
+            //     'Nombre de subrruta ',
+            //     style: TextStyle(fontStyle: FontStyle.italic),
+            //   ),
+            // ),
             DataColumn(
               label: Text(
                 'GeocercaOrigen',
@@ -83,7 +87,7 @@ class _SubrutasState extends State<Subrutas> {
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-             DataColumn(
+            DataColumn(
               label: Text(
                 'Acciones',
                 style: TextStyle(fontStyle: FontStyle.italic),
@@ -132,7 +136,8 @@ class _SubrutasState extends State<Subrutas> {
                       });
                     },
                   ),
-                )],
+                )
+              ],
             ),
             DataRow(
               cells: <DataCell>[
@@ -154,8 +159,7 @@ class _SubrutasState extends State<Subrutas> {
                     },
                   ),
                 )
-                
-                ],
+              ],
             ),
             DataRow(
               cells: <DataCell>[
@@ -176,7 +180,8 @@ class _SubrutasState extends State<Subrutas> {
                       });
                     },
                   ),
-                )],
+                )
+              ],
             ),
             DataRow(
               cells: <DataCell>[
@@ -197,7 +202,8 @@ class _SubrutasState extends State<Subrutas> {
                       });
                     },
                   ),
-                )],
+                )
+              ],
             ),
           ],
         ),

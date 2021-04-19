@@ -8,9 +8,29 @@ class Rutas extends StatefulWidget {
 }
 
 class _RutasState extends State<Rutas> {
+  Map<String, dynamic> _arguments;
+  Map<String, dynamic> _response;
+  RutasProvider _userProvider = RutasProvider();
+  getEarningDay({fecha = ""}) async {
+    final response = await _userProvider.getEarningsDetailsDay(
+        fecha: _arguments["fecha"].toString());
+
+    if (response["status"]) {
+      _response = response;
+    } else {
+      print(response);
+    }
+
+    if (this.mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: Text("Rutas"),
+      ),
       body: SingleChildScrollView(
           child: Container(
         //  DataTable(
@@ -90,12 +110,36 @@ class _RutasState extends State<Rutas> {
               cells: <DataCell>[
                 DataCell(Text('guerrero')),
                 DataCell(Text('130')),
+                DataCell(
+                  IconButton(
+                    icon: const Icon(Icons.edit_location_outlined),
+                    tooltip: 'editar subrruta',
+                    onPressed: () {
+                      setState(() {
+                        // _volume += 10;
+                        print("subruta elegida");
+                      });
+                    },
+                  ),
+                ),
               ],
             ),
             DataRow(
               cells: <DataCell>[
                 DataCell(Text('jalisco x sal salamanca')),
                 DataCell(Text('320')),
+                DataCell(
+                  IconButton(
+                    icon: const Icon(Icons.edit_location_outlined),
+                    tooltip: 'editar subrruta',
+                    onPressed: () {
+                      setState(() {
+                        // _volume += 10;
+                        print("subruta elegida");
+                      });
+                    },
+                  ),
+                ),
               ],
             ),
           ],
