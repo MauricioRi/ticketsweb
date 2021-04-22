@@ -10,10 +10,10 @@ class Rutas extends StatefulWidget {
 class _RutasState extends State<Rutas> {
   Map<String, dynamic> _arguments;
   Map<String, dynamic> _response;
-  RutasProvider _userProvider = RutasProvider();
+  // RutasProvider _userProvider = RutasProvider();
   getEarningDay({fecha = ""}) async {
-    final response = await _userProvider.getEarningsDetailsDay(
-        fecha: _arguments["fecha"].toString());
+    final response = {};
+    // fecha: _arguments["fecha"].toString());
 
     if (response["status"]) {
       _response = response;

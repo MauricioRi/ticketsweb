@@ -12,6 +12,7 @@ import 'package:ticketsmoreweb/src/pages/geofence.dart';
 
 import 'package:ticketsmoreweb/src/pages/home_page.dart';
 import 'package:ticketsmoreweb/src/pages/login_page.dart';
+import 'package:ticketsmoreweb/src/pages/new_route_page.dart';
 import 'package:ticketsmoreweb/src/pages/rutas.dart';
 import 'package:ticketsmoreweb/src/pages/subrrutas.dart';
 
@@ -48,5 +49,6 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
     'Mapa': (BuildContext context) => GeofenceMap(),
     'Rutas': (BuildContext context) => Rutas(),
     'subrutas': (BuildContext context) => Subrutas(),
+    'newSubruta': (BuildContext context) => NewRoutePage()
   };
 }

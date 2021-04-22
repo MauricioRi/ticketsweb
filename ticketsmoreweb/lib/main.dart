@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         routes: getApplicationRoutes(),
-        initialRoute: 'login',
+        initialRoute: 'newSubruta',
         title: 'Geofences-T',
         theme: ThemeData(
           // primaryColor: (hora.hour > 18 || hora.hour < 7)
