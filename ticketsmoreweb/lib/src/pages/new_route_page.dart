@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:dropdown_below/dropdown_below.dart';
 import 'package:select_form_field/select_form_field.dart';
+import 'package:ticketsmoreweb/src/repository/repository.dart';
 
 class NewRoutePage extends StatefulWidget {
   @override
@@ -9,14 +10,17 @@ class NewRoutePage extends StatefulWidget {
 
 class _NewRoutePageState extends State<NewRoutePage> {
   List<Map<String, TextEditingController>> _subRoutes = [];
+  Repository _repository = Repository();
   List<List<String>> _subroutes = [];
   List<Widget> subroutesWidget = [];
   List<DataRow> subroutesWidget2 = [];
-  List _testList = [
-    {'no': 1, 'keyword': 'blue'},
-    {'no': 2, 'keyword': 'black'},
-    {'no': 3, 'keyword': 'red'}
-  ];
+  final _keyF1 = GlobalKey<FormState>();
+  final _keyF2 = GlobalKey<FormState>();
+  // List _testList = [
+  //   {'no': 1, 'keyword': 'blue'},
+  //   {'no': 2, 'keyword': 'black'},
+  //   {'no': 3, 'keyword': 'red'}
+  // ];
   TextEditingController _controller, _controller2, _nombre, _costom, _costo;
   //String _initialValue;
   String _valueChanged = '';
@@ -25,25 +29,28 @@ class _NewRoutePageState extends State<NewRoutePage> {
   // List<DropdownMenuItem> _dropdownTestItems;
   // var _selectedTest, _selectedTest2;
 
-  final List<Map<String, dynamic>> _items = [
-    {
-      'value': 'boxValue',
-      'label': 'Box Label',
-      // 'icon': Icon(Icons.stop),
-    },
-    {
-      'value': 'circleValue',
-      'label': 'Circle Label',
-      // 'icon': Icon(Icons.fiber_manual_record),
-      // 'textStyle': TextStyle(color: Colors.red),
-    },
-    {
-      'value': 'starValue',
-      'label': 'Star Label',
-      'enable': false,
-      // 'icon': Icon(Icons.grade),
-    },
-  ];
+  // List<Map<String, dynamic>> _items //= [];
+  //     = [
+  //   {
+  //     'value': 'boxValue',
+  //     'label': 'Box Label',
+  //     // 'icon': Icon(Icons.stop),
+  //   },
+  //   {
+  //     'value': 'circleValue',
+  //     'label': 'Circle Label',
+  //     // 'icon': Icon(Icons.fiber_manual_record),
+  //     // 'textStyle': TextStyle(color: Colors.red),
+  //   },
+  //   {
+  //     'value': 'starValue',
+  //     'label': 'Star Label',
+  //     'enable': false,
+  //     // 'icon': Icon(Icons.grade),
+  //   },
+  // ];
+  //
+  List<Map<String, dynamic>> _items = [];
 
   @override
   void initState() {
@@ -53,7 +60,55 @@ class _NewRoutePageState extends State<NewRoutePage> {
     _costom = TextEditingController();
     _nombre = TextEditingController();
     _costo = TextEditingController();
+
+    initConfig();
     // _dropdownTestItems = buildDropdownTestItems(_testList);
+  }
+
+  initConfig() async {
+    final response = await _repository.getAllGeofences();
+    print(response.runtimeType);
+    if (response.containsKey("selectG")) {
+      // final r = response["selectG"] as List<Map<String, dynamic>>;
+      _items = List<Map<String, dynamic>>.from(response["selectG"]);
+    } else {
+      showError(response["message"]);
+    }
+  }
+
+  showError(msg) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error al cargar la información de la página'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('$msg'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Recargar información'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                initConfig();
+              },
+            ),
+            TextButton(
+              child: Text('Cerrar'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // initConfig();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   List<DropdownMenuItem> buildDropdownTestItems(List _testList) {
@@ -89,14 +144,24 @@ class _NewRoutePageState extends State<NewRoutePage> {
           children: [
             Container(
               margin: EdgeInsets.only(top: 30.0),
+              // width: MediaQuery.of(context).size.width,
               child: Form(
+                key: _keyF1,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                         width: MediaQuery.of(context).size.width * 0.25,
                         child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "El nombre no puede ser vació";
+                            }
+
+                            return null;
+                          },
                           decoration: InputDecoration(
                               labelText: "Nombre de la ruta",
                               hintText: "Morelia - Zinapecuaro",
@@ -109,6 +174,13 @@ class _NewRoutePageState extends State<NewRoutePage> {
                     Container(
                         width: MediaQuery.of(context).size.width * 0.25,
                         child: TextFormField(
+                          validator: (value) {
+                            if (!value.contains(
+                                RegExp(r'^[0-9]+([\.][0-9]{2}){0,1}$'))) {
+                              return "El número debe ser entero o a 2 decimales";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                               labelText: "Distancia de la ruta",
                               hintText: "20 Km",
@@ -125,7 +197,35 @@ class _NewRoutePageState extends State<NewRoutePage> {
                             backgroundColor: Theme.of(context).primaryColor,
                             shape: StadiumBorder(),
                             padding: EdgeInsets.symmetric(horizontal: 15.0)),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (!_keyF1.currentState.validate()) return;
+
+                          showDialog<void>(
+                            context: context,
+                            barrierDismissible: false, // user must tap button!
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('¿Desea guardar la información?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Guardar'),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      // initConfig();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Cancelar'),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      // initConfig();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -188,9 +288,10 @@ class _NewRoutePageState extends State<NewRoutePage> {
               margin: EdgeInsets.only(top: 30.0),
               padding: EdgeInsets.all(20.0),
               child: Form(
+                key: _keyF2,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.2,
+                  height: MediaQuery.of(context).size.height * 0.15,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -223,10 +324,39 @@ class _NewRoutePageState extends State<NewRoutePage> {
   }
 
   void _deleteSubroute() {
-    setState(() {
-      subroutesWidget.removeLast();
-      subroutesWidget.removeLast();
-    });
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('¿Desea eliminar todas las subrutas?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Aceptar'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                subroutesWidget.clear();
+                subroutesWidget2.clear();
+                _subroutes.clear();
+                setState(() {});
+              },
+            ),
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // initConfig();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    // setState(() {
+    //   subroutesWidget.removeLast();
+    //   subroutesWidget.removeLast();
+    // });
   }
 
   _createSubroute() {
@@ -240,6 +370,13 @@ class _NewRoutePageState extends State<NewRoutePage> {
             Container(
               width: MediaQuery.of(context).size.width * 0.2,
               child: TextFormField(
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "El nombre no puede ser vació";
+                  }
+
+                  return null;
+                },
                 controller: _nombre,
                 decoration: InputDecoration(
                     labelText: "Nombre de la subruta",
@@ -251,22 +388,28 @@ class _NewRoutePageState extends State<NewRoutePage> {
               width: 10.0,
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 0.2,
+              width: MediaQuery.of(context).size.width * 0.15,
               child: _createDropdown(true),
             ),
             SizedBox(
               width: 10.0,
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 0.2,
+              width: MediaQuery.of(context).size.width * 0.15,
               child: _createDropdown(false),
             ),
             SizedBox(
               width: 10.0,
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 0.1,
+              width: MediaQuery.of(context).size.width * 0.15,
               child: TextFormField(
+                validator: (value) {
+                  if (!value.contains(RegExp(r'^[0-9]+([\.][0-9]{2}){0,1}$'))) {
+                    return "El número debe ser entero o a 2 decimales";
+                  }
+                  return null;
+                },
                 controller: _costom,
                 decoration: InputDecoration(
                     labelText: "Costo minimo",
@@ -278,8 +421,14 @@ class _NewRoutePageState extends State<NewRoutePage> {
               width: 10.0,
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 0.1,
+              width: MediaQuery.of(context).size.width * 0.15,
               child: TextFormField(
+                validator: (value) {
+                  if (!value.contains(RegExp(r'^[0-9]+([\.][0-9]{2}){0,1}$'))) {
+                    return "El número debe ser entero o a 2 decimales";
+                  }
+                  return null;
+                },
                 controller: _costo,
                 decoration: InputDecoration(
                     labelText: "Costo de subruta",
@@ -310,6 +459,10 @@ class _NewRoutePageState extends State<NewRoutePage> {
                       //       TextStyle(color: Colors.white)),
                       // ),
                       onPressed: () {
+                        if (!_keyF2.currentState.validate() ||
+                            _controller.text == "" ||
+                            _controller2.text == "") return;
+
                         setState(() {
                           _subroutes.add([
                             _nombre.text,
@@ -337,7 +490,7 @@ class _NewRoutePageState extends State<NewRoutePage> {
                           shape: StadiumBorder(),
                           padding: EdgeInsets.symmetric(horizontal: 15.0)),
                       onPressed: () {
-                        _subroutes.removeLast();
+                        if (_subroutes.length > 0) _subroutes?.removeLast();
                         _createSubroutes();
                       },
                       child: Row(
@@ -359,6 +512,7 @@ class _NewRoutePageState extends State<NewRoutePage> {
   }
 
   _createDropdown(isFirst) {
+    print(_items);
     return SelectFormField(
       //type: SelectFormFieldType.dialog,
       controller: isFirst ? _controller : _controller2,
@@ -387,12 +541,20 @@ class _NewRoutePageState extends State<NewRoutePage> {
       items
         ..add(DataRow(cells: [
           DataCell(Text(i[0])),
-          DataCell(Text(i[1])),
-          DataCell(Text(i[2])),
+          DataCell(Text(
+              "[${i[1]}] - ${(_items.firstWhere((e) => e["value"] == i[1]))["label"]}")),
+          DataCell(Text(
+              "[${i[2]}] - ${(_items.firstWhere((e) => e["value"] == i[2]))["label"]}")),
           DataCell(Text(i[3])),
           DataCell(Text(i[4]))
         ]));
     }
+
+    _nombre.text = "";
+    // _controller.text = "";
+    // _controller2.text = "";
+    _costom.text = "";
+    _costo.text = "";
 
     subroutesWidget2 = items;
     setState(() {});
