@@ -1,12 +1,8 @@
-import 'package:http/http.dart' as _http;
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
-import '../models/Routes.model.dart';
 import 'package:http/http.dart' as http;
 import 'baseUrl.dart';
-import 'dart:convert';
 //import 'package:movert_taxista/src/library/globals.dart' as _globals;
 
 class RutasProvider {
