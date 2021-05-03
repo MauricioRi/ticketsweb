@@ -92,10 +92,12 @@ class RutasProvider {
     try {
       Uri url = Uri.http(_url.getBaseUrl(),
           _url.getNextUrl() + "/newRoute"); //del archivo routes
-      print(url);
+
+      print(url.path);
+      print(url.host);
       final response = await http
           .post(url, body: {
-            "id_city": 1,
+            // "id_city": 1,
             "Name_route": route["name"],
             "description": route["description"]
           })
@@ -103,12 +105,11 @@ class RutasProvider {
             Duration(seconds: 5),
           )
           .catchError((onError) {
-            return {"status": false, "mensaje": "coneccion rechazada"};
+            print(onError.toString());
+            return throw ("coneccion rechazada");
           });
-
-      if (response != null &&
-          response?.statusCode != null &&
-          response.statusCode == 200) {
+      print(response.statusCode);
+      if (response != null && response.statusCode == 201) {
         // print(response.body);
         final jsonResponse = json.decode(response.body);
 
@@ -119,18 +120,22 @@ class RutasProvider {
                   "/newSubRoute/" +
                   jsonResponse["id"].toString());
 
+          print(url2.path);
           final response2 = await http
-              .post(url2, body: subroute)
+              .post(url2, body: {"subroutes": json.encode(subroute)})
               .timeout(
                 Duration(seconds: 5),
               )
               .catchError((onError) {
-            return throw "coneccion rechazada";
-          });
+                print(onError.toString());
+                return throw "coneccion rechazada";
+              });
+          print(response2.body);
 
-          final jsonResponse2 = json.decode(response.body);
+          final jsonResponse2 = json.decode(response2.body);
+          print(response2.statusCode);
 
-          if (response2.statusCode == 200 && jsonResponse2["status"]) {
+          if (response2.statusCode == 201 && jsonResponse2["status"]) {
             return jsonResponse2;
           } else
             throw ("Error al registrar la subruta");
@@ -138,10 +143,10 @@ class RutasProvider {
           return {"status": true, "message": "Ruta creada con éxito"};
         // return jsonResponse;
       } else {
-        return {"status": false, "mensaje": "Error al generar la ruta"};
+        return {"status": false, "message": "Error al generar la ruta"};
       }
     } catch (e) {
-      return {"status": false, "mensaje": e.toString()};
+      return {"status": false, "message": e.toString()};
     }
   }
 }
