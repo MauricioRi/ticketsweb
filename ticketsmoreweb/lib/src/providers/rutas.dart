@@ -121,15 +121,18 @@ class RutasProvider {
                   jsonResponse["id"].toString());
 
           print(url2.path);
+          print({"subroutes": json.encode(subroute)});
           final response2 = await http
-              .post(url2, body: {"subroutes": json.encode(subroute)})
+              .post(url2,
+                  headers: {"content-type": "application/json; charset=utf-8"},
+                  body: json.encode({"subroutes": subroute}))
               .timeout(
                 Duration(seconds: 5),
               )
               .catchError((onError) {
-                print(onError.toString());
-                return throw "coneccion rechazada";
-              });
+            print(onError.toString());
+            return throw "coneccion rechazada";
+          });
           print(response2.body);
 
           final jsonResponse2 = json.decode(response2.body);
