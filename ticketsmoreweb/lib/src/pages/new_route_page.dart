@@ -9,19 +9,26 @@ class NewRoutePage extends StatefulWidget {
 }
 
 class _NewRoutePageState extends State<NewRoutePage> {
-  List<Map<String, TextEditingController>> _subRoutes = [];
+  // List<Map<String, TextEditingController>> _subRoutes = [];
   Repository _repository = Repository();
   List<List<String>> _subroutes = [];
   List<Widget> subroutesWidget = [];
   List<DataRow> subroutesWidget2 = [];
   final _keyF1 = GlobalKey<FormState>();
   final _keyF2 = GlobalKey<FormState>();
+  String idRoute;
   // List _testList = [
   //   {'no': 1, 'keyword': 'blue'},
   //   {'no': 2, 'keyword': 'black'},
   //   {'no': 3, 'keyword': 'red'}
   // ];
-  TextEditingController _controller, _controller2, _nombre, _costom, _costo;
+  TextEditingController _controller,
+      _controller2,
+      _nombre,
+      _costom,
+      _costo,
+      _name,
+      _desc;
   //String _initialValue;
   String _valueChanged = '';
   String _valueToValidate = '';
@@ -60,8 +67,10 @@ class _NewRoutePageState extends State<NewRoutePage> {
     _costom = TextEditingController();
     _nombre = TextEditingController();
     _costo = TextEditingController();
+    _name = TextEditingController();
+    _desc = TextEditingController();
 
-    initConfig();
+    // initConfig();
     // _dropdownTestItems = buildDropdownTestItems(_testList);
   }
 
@@ -134,8 +143,58 @@ class _NewRoutePageState extends State<NewRoutePage> {
     // });
   }
 
+  _getAllInfo(idRoute) async {
+    final response = await _repository.getRoute(idRoute);
+    int index = 0;
+
+    if (!response.containsKey("status")) {
+      _name.text = response["data"]["Name_route"];
+      _desc.text = response["data"]["description"];
+    } else {
+      index++;
+    }
+
+    final response2 = await _repository.getAllSubroutes(idRoute);
+
+    if (response2["status"]) {
+      _subroutes = response2["data"];
+    } else {
+      index++;
+    }
+
+    if (index > 0) {
+      showDialog(
+          context: this.context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+                title: Text("Error al obtener la información"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        _getAllInfo(idRoute);
+                      },
+                      child: Text("Recargar"))
+                ],
+                content: Text(
+                    "Los errores presentados se muestran a continuación: \n\n${response["message"] != null ? response["message"] + "\n\n" : ""}${response2["message"] != null ? response2["message"] : ""}"),
+              ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> arguments =
+        ModalRoute.of(context).settings.arguments;
+
+    if (arguments != null) {
+      _getAllInfo(arguments["id"]);
+      idRoute = arguments["id"].toString();
+
+      setState(() {});
+    } else {
+      initConfig();
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Agregar rutas"),
@@ -155,6 +214,7 @@ class _NewRoutePageState extends State<NewRoutePage> {
                     Container(
                         width: MediaQuery.of(context).size.width * 0.25,
                         child: TextFormField(
+                          controller: _name,
                           validator: (value) {
                             if (value.isEmpty) {
                               return "El nombre no puede ser vació";
@@ -174,6 +234,7 @@ class _NewRoutePageState extends State<NewRoutePage> {
                     Container(
                         width: MediaQuery.of(context).size.width * 0.25,
                         child: TextFormField(
+                          controller: _desc,
                           validator: (value) {
                             if (!value.contains(
                                 RegExp(r'^[0-9]+([\.][0-9]{2}){0,1}$'))) {
@@ -210,7 +271,41 @@ class _NewRoutePageState extends State<NewRoutePage> {
                                   TextButton(
                                     child: Text('Guardar'),
                                     onPressed: () async {
+                                      final response = await _repository
+                                          .saveRoute(ruta: {
+                                        "name": _name.text,
+                                        "description": _desc.text
+                                      }, subroute: _subroutes);
+
                                       Navigator.of(context).pop();
+
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) => AlertDialog(
+                                                title: Text("Aviso"),
+                                                content: Text(
+                                                    "${response["message"]}"),
+                                                actions: [
+                                                  response["status"]
+                                                      ? TextButton(
+                                                          child:
+                                                              Text("Aceptar"),
+                                                          onPressed: () {
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                "home");
+                                                          },
+                                                        )
+                                                      : TextButton(
+                                                          child: Text("Cerrar"),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        )
+                                                ],
+                                              ));
                                       // initConfig();
                                     },
                                   ),
