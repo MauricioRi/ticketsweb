@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ticketsmoreweb/src/bloc/provider.dart';
+import 'package:ticketsmoreweb/src/models/LocalUser.dart';
 // import 'package:mobvertaxi_usuario/src/pages/search_page.dart';
 
 import 'package:ticketsmoreweb/src/routes/routes.dart';
+GetIt getIt = GetIt.instance;
 
-void main() => runApp(MyApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  getIt.registerSingleton<LocalUser>(new LocalUser(), signalsReady: true);
+
+  runApp(new MyApp());
+}
+
 
 class MyApp extends StatelessWidget {
   @override

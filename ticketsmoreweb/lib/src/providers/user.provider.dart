@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import '../models/user.model.dart';
 import 'package:http/http.dart' as http;
 import 'baseUrl.dart';
 import 'dart:convert';
 
+GetIt getIt = GetIt.instance;
 class UserProvider {
   BaseUrl _url = BaseUrl();
 
@@ -26,6 +28,9 @@ class UserProvider {
         response.statusCode == 200) {
       print(response.body);
       final jsonResponse = json.decode(response.body);
+      ///aqui se guarda el token recibido en el getit
+      ///getIt.get<LocalUser>().logged = true
+      ///getIt.get<LocalUser>().token = 'token'
       return jsonResponse;
     } else {
       return {"status": false, "mensaje": "user invalido"};
